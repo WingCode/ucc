@@ -4,6 +4,8 @@ from cirq import CNOT, H, X, LineQubit, NamedQubit
 from cirq.testing import assert_same_circuits
 from pytket import Circuit as TketCircuit
 from qiskit import QuantumCircuit as QiskitCircuit
+from qiskit import qasm2
+import pyzx as zx
 from qiskit.converters import circuit_to_dag
 from qiskit.quantum_info import Statevector
 from qiskit.transpiler.passes import GatesInBasis
@@ -212,3 +214,19 @@ def test_compiled_circuits_equivalent(circuit_function, num_qubits, seed):
     sv1 = Statevector(circuit)
     sv2 = Statevector(transpiled)
     assert sv1.equiv(sv2)
+
+
+def test_pyzx_circuit_equality(tmp_path):
+    org_circuit = random_clifford_circuit(4)
+    optimized_circuit = compile(org_circuit, return_format="qiskit")
+
+    org_file = tmp_path / "org_circuit.qasm"
+    opt_file = tmp_path / "optimized_circuit.qasm"
+
+    qasm2.dump(org_circuit, org_file)
+    qasm2.dump(optimized_circuit, opt_file)
+
+    circ1 = zx.Circuit.from_qasm(org_file.read_text())
+    circ2 = zx.Circuit.from_qasm(opt_file.read_text())
+
+    assert zx.compare_tensors(circ1, circ2)
