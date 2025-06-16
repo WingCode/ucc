@@ -229,4 +229,5 @@ def test_pyzx_circuit_equality(tmp_path):
     circ1 = zx.Circuit.from_qasm(org_file.read_text())
     circ2 = zx.Circuit.from_qasm(opt_file.read_text())
 
+    # TODO: Figure out why it returns False for equality
     assert circ1.verify_equality(circ2)
