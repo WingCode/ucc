@@ -3,9 +3,9 @@ from cirq import Circuit as CirqCircuit
 from cirq import CNOT, H, X, LineQubit, NamedQubit
 from cirq.testing import assert_same_circuits
 from pytket import Circuit as TketCircuit
+import pyzx as zx
 from qiskit import QuantumCircuit as QiskitCircuit
 from qiskit import qasm2
-import pyzx as zx
 from qiskit.converters import circuit_to_dag
 from qiskit.quantum_info import Statevector
 from qiskit.transpiler.passes import GatesInBasis
@@ -229,4 +229,4 @@ def test_pyzx_circuit_equality(tmp_path):
     circ1 = zx.Circuit.from_qasm(org_file.read_text())
     circ2 = zx.Circuit.from_qasm(opt_file.read_text())
 
-    assert zx.compare_tensors(circ1, circ2)
+    assert circ1.verify_equality(circ2)
